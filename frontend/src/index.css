@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+body { @apply bg-slate-950 text-slate-100 antialiased m-0; font-family: system-ui, sans-serif; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { @apply bg-slate-700 rounded-full; }

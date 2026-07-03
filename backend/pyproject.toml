@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "firstchat-backend"
+version = "1.0.0"
+description = "Production-ready FastAPI backend for FirstChat"
+authors = ["FirstChat Architect <architect@firstchat.local>"]
+
+[tool.poetry.dependencies]
+python              = "^3.12"
+fastapi             = "^0.111.0"
+uvicorn             = { extras = ["standard"], version = "^0.30.0" }
+pydantic            = "^2.9.0"
+pydantic-settings   = "^2.4.0"
+SQLAlchemy          = "^2.0.25"
+asyncpg             = "^0.29.0"
+alembic             = "^1.13.0"
+passlib             = { extras = ["bcrypt"], version = "^1.7.4" }
+python-jose         = { extras = ["cryptography"], version = "^3.3.0" }
+redis               = { extras = ["hiredis"], version = "^5.0.0" }
+cloudinary          = "^1.40.0"
+firebase-admin      = "^6.5.0"
+email-validator     = "^2.1.0"
+slowapi             = "^0.1.9"
+python-multipart    = "^0.0.9"
+aiosmtplib          = "^3.0.0"
+jinja2              = "^3.1.4"
+python-dotenv       = "^1.0.0"
+httpx               = "^0.27.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest              = "^8.2.0"
+pytest-asyncio      = "^0.23.0"
+anyio               = { extras = ["trio"], version = "^4.4.0" }
+black               = "^24.4.0"
+ruff                = "^0.4.0"
+
+[build-system]
+requires      = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

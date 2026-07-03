@@ -1,0 +1,27 @@
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.env          # never commit real secrets
+
+# ── Node / Frontend ────────────────────────────────────────────────────────
+node_modules/
+dist/
+.pnpm-store/
+
+# ── Docker ────────────────────────────────────────────────────────────────
+postgres_data/
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
