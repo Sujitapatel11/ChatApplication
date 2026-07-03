@@ -1,29 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const WS_URL = (import.meta.env.VITE_WS_BASE_URL ?? "ws://localhost:8000") + "/ws";
+// In production: VITE_WS_BASE_URL = wss://your-app.railway.app
+// In dev:        ws://localhost:8000
+const WS_BASE = import.meta.env.VITE_WS_BASE_URL ?? "ws://localhost:8000";
+const WS_URL  = `${WS_BASE}/ws`;
 
 type Handler = (payload: unknown) => void;
 
 export function useWebSocket() {
-  const ws = useRef<WebSocket | null>(null);
+  const ws        = useRef<WebSocket | null>(null);
   const listeners = useRef<Map<string, Set<Handler>>>(new Map());
-  const retry = useRef(0);
+  const retry     = useRef(0);
   const [connected, setConnected] = useState(false);
 
   const connect = useCallback(() => {
     const token = localStorage.getItem("fc_token");
     if (!token) return;
+
     const socket = new WebSocket(`${WS_URL}?token=${encodeURIComponent(token)}`);
     ws.current = socket;
 
-    socket.onopen = () => { setConnected(true); retry.current = 0; };
+    socket.onopen    = () => { setConnected(true); retry.current = 0; };
     socket.onmessage = (e) => {
       try {
         const { event, payload } = JSON.parse(e.data);
         listeners.current.get(event)?.forEach(h => h(payload));
       } catch {}
     };
-    socket.onclose = () => {
+    socket.onclose   = () => {
       setConnected(false);
       if (retry.current < 5) {
         setTimeout(connect, 1000 * Math.pow(2, retry.current++));
