@@ -1,27 +1,62 @@
 import axios from "axios";
 
-// Set VITE_API_BASE_URL in Vercel dashboard to your Railway backend URL
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000/api/v1";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (!API_BASE_URL) {
+  throw new Error(
+    "VITE_API_BASE_URL is not defined. Please configure it in your environment variables."
+  );
+}
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   timeout: 15000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-api.interceptors.request.use((c) => {
-  const t = localStorage.getItem("fc_token");
-  if (t) c.headers.Authorization = `Bearer ${t}`;
-  return c;
-});
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("fc_token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
-  (r) => r,
-  (e) => {
-    if (e.response?.status === 401) {
-      localStorage.removeItem("fc_token");
-      window.location.href = "/login";
+  (response) => response,
+  async (error) => {
+    const status = error.response?.status;
+
+    switch (status) {
+      case 401:
+        localStorage.removeItem("fc_token");
+        window.location.href = "/login";
+        break;
+
+      case 403:
+        console.error("Forbidden");
+        break;
+
+      case 404:
+        console.error("API endpoint not found");
+        break;
+
+      case 500:
+        console.error("Internal server error");
+        break;
+
+      default:
+        console.error(error);
     }
-    return Promise.reject(e);
+
+    return Promise.reject(error);
   }
 );
 
